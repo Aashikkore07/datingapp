@@ -15,8 +15,8 @@ namespace API.Controllers
             var members =await  context.Users.ToListAsync();
             return Ok(members);
         }
-        [Authorize]
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<AppUser>> GetMembersById(string id)
         {
             var member = await context.Users.FindAsync(id);
