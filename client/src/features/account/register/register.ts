@@ -1,6 +1,6 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RegisterCreds, User } from '../../../types/User';
+import { RegisterCreds } from '../../../types/User';
 import { AccountService } from '../../../core/services/account-service';
 
 @Component({
@@ -15,9 +15,12 @@ export class Register {
   cancelRegister = output<boolean>();
 
   register() {
-    this.accountService
-      .register(this.creds)
-      .subscribe({ next: (response) => console.log(response), error: (err) => console.log(err) });
+    this.accountService.register(this.creds).subscribe({
+      next: (response) => console.log(response),
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   cancel(value: boolean) {
