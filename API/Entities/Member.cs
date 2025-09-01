@@ -12,7 +12,7 @@ public class Member
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
     public required string Gender { get; set; }
-    public string? Discription { get; set; }
+    public string? Description { get; set; }
     public required string City { get; set; }
     public required string Country { get; set; }
 

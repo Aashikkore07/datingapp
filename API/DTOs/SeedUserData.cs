@@ -13,7 +13,7 @@ public class SeedUserData
     public DateTime Created { get; set; } 
     public DateTime LastActive { get; set; } 
     public required string Gender { get; set; }
-    public string? Discription { get; set; }
+    public string?  Description { get; set; }
     public required string City { get; set; }
     public required string Country { get; set; }
-}
+}   

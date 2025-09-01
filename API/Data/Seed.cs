@@ -38,7 +38,7 @@ public class Seed
                 {
                     Id = member.Id,
                     DisplayName = member.DisplayName,
-                    Discription = member.Discription,
+                    Description = member.Description,
                     DateOfBirth = member.DateOfBirth,
                     ImageUrl = member.ImageUrl,
                     Gender = member.Gender,

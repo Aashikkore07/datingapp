@@ -27,6 +27,6 @@ namespace API.Controllers
         public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(string id)
         {
             return Ok( await memberRepository.GetPhotosForMemberAsync(id));
-        } 
+        }   
     }
 }
