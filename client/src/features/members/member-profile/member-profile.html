@@ -1,4 +1,4 @@
-@if (member(); as member) {
+@if (memberService.member(); as member) {
 
 <div class="flex flex-col gap-3">
   <div class="flex gap-3">
@@ -10,6 +10,55 @@
     ><span>{{ member.lastActive | date : 'd/MM/yy hh:mm:ss a' }}</span>
   </div>
   <h3 class="text-lg font-semibold text-primary">About {{ member.displayName }}</h3>
+  @if (memberService.editMode()) {
+  <form #editForm="ngForm" (ngSubmit)="updateProfile()" class="flex flex-col w-full gap-4">
+    <label class="floating-label" for="">
+      <span> Display Name </span>
+      <input
+        class="input w-full"
+        name="displayName"
+        [(ngModel)]="editableMember.displayName"
+        placeholder="Display Name"
+        type="text"
+      />
+    </label>
+    <label class="floating-label" for="">
+      <span> Description </span>
+      <textarea
+        class="textarea w-full"
+        name="description"
+        [(ngModel)]="editableMember.description"
+        placeholder="Description"
+        type="text"
+      ></textarea>
+    </label>
+    <label class="floating-label" for="">
+      <span> City </span>
+      <input
+        class="input w-full"
+        name="City"
+        [(ngModel)]="editableMember.city"
+        placeholder="City Name"
+        type="text"
+      />
+    </label>
+    <label class="floating-label" for="">
+      <span> Country Name</span>
+      <input
+        class="input w-full"
+        name="Country"
+        [(ngModel)]="editableMember.country"
+        placeholder="Country Name"
+        type="text"
+      />
+    </label>
+    <div class="flex self-center-safe">
+      <button [disabled]="!editForm.dirty" type="submit" class="btn btn-success">Submit</button>
+    </div>
+    Edit form goes here
+  </form>
+  } @else {
   <div class="">{{ member.description }}</div>
+  }
 </div>
 }

@@ -22,10 +22,12 @@ export class AccountService {
       })
     );
   }
+
   setCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
   }
+
   login(creds: LoginCreds) {
     return this.http.post<User>(this.baseUrl + 'account/login', creds).pipe(
       tap((user) => {
@@ -35,6 +37,7 @@ export class AccountService {
       })
     );
   }
+
   logout() {
     localStorage.removeItem('user');
     this.currentUser.set(null);

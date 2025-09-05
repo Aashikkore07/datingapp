@@ -46,7 +46,7 @@ export class ToastService {
   warning(message: string, duration?: number) {
     this.createToastContainer(message, 'alert-warning', duration);
   }
-  infp(message: string, duration?: number) {
+  info(message: string, duration?: number) {
     this.createToastContainer(message, 'alert-info', duration);
   }
 }
