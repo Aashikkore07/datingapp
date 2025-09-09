@@ -28,6 +28,20 @@ export class MemberService {
   updateMember(member: EditableMember) {
     return this.http.put(this.baseUrl + 'members/', member);
   }
+
+  updatePhoto(file: File) {
+    const formdata = new FormData();
+    formdata.append('file', file);
+    return this.http.post<Photo>(this.baseUrl + 'members/add-photo', formdata);
+  }
+
+  setMainPhoto(photo: Photo) {
+    return this.http.put(this.baseUrl + 'members/set-main-photo/' + photo.id, {});
+  }
+
+  deletePhoto(photoId: number) {
+    return this.http.delete(this.baseUrl + 'members/delete-photo/' + photoId);
+  }
   // private accountService = inject(AccountService);
   // private getHttpOptions() {
   //   return {

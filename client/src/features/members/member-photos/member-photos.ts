@@ -1,28 +1,68 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MemberService } from '../../../core/services/member-service';
-import { Photo } from '../../../types/Member';
+import { Member, Photo } from '../../../types/Member';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { ImageUpload } from '../../../shared/image-upload/image-upload';
+import { AccountService } from '../../../core/services/account-service';
+import { User } from '../../../types/User';
+import { StarButton } from '../../../shared/star-button/star-button';
+import { DeleteButton } from '../../../shared/delete-button/delete-button';
 
 @Component({
   selector: 'app-member-photos',
-  imports: [AsyncPipe],
+  imports: [ImageUpload, StarButton, DeleteButton],
   templateUrl: './member-photos.html',
   styleUrl: './member-photos.css',
 })
-export class MemberPhotos {
-  private memberService = inject(MemberService);
-  protected photos$?: Observable<Photo[]>;
+export class MemberPhotos implements OnInit {
+  protected memberService = inject(MemberService);
+  // protected photos$?: Observable<Photo[]>;
+  protected photos = signal<Photo[]>([]);
   private route = inject(ActivatedRoute);
-  constructor() {
+  protected loading = signal(false);
+  protected accountService = inject(AccountService);
+  constructor() {}
+  ngOnInit(): void {
     const memberId = this.route.parent?.snapshot.paramMap.get('id');
     if (!memberId) return;
-    this.photos$ = this.memberService.getMemberPhotos(memberId);
+    this.memberService.getMemberPhotos(memberId).subscribe({
+      next: (photos) => this.photos.set(photos),
+    });
   }
-  get photoMocks() {
-    return Array.from({ length: 20 }, () => ({
-      url: 'user.png',
-    }));
+  onUploadImage(file: File) {
+    this.loading.set(true);
+    this.memberService.updatePhoto(file).subscribe({
+      next: (photo) => {
+        this.memberService.editMode.set(false);
+        this.loading.set(false);
+        this.photos.update((photos) => [...photos, photo]);
+      },
+      error: (err) => {
+        console.log('Error uploading image: ', err);
+        this.loading.set(false);
+      },
+    });
+  }
+  setMainPhoto(photo: Photo) {
+    this.memberService.setMainPhoto(photo).subscribe({
+      next: () => {
+        const currentUser = this.accountService.currentUser();
+        if (currentUser) currentUser.imageUrl = photo.url;
+        this.accountService.setCurrentUser(currentUser as User);
+        const memberUser = this.memberService.member();
+
+        this.memberService.member.update(
+          (previous) => ({ ...previous, imageUrl: photo.url } as Member)
+        );
+      },
+    });
+  }
+
+  deletePhoto(photoId: number) {
+    this.memberService.deletePhoto(photoId).subscribe({
+      next: () => {
+        this.photos.update((photo) => photo.filter((x) => x.id != photoId));
+      },
+    });
   }
 }
