@@ -3,6 +3,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
@@ -14,9 +15,10 @@ namespace API.Controllers
     public class MembersController(IMemberRepository memberRepository, IPhotoService photoService) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
+        public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers([FromQuery]MemberParams memberParams)
         {
-            var members = await memberRepository.GetMemberAsync();
+            memberParams.CurrentMemberId = User.GetMemberId();
+            var members = await memberRepository.GetMemberAsync(memberParams);
             return Ok(members);
         }
         [HttpGet("{id}")]
@@ -67,7 +69,7 @@ namespace API.Controllers
             {
                 member.ImageUrl = photo.Url;
                 member.User.ImageUrl = photo.Url;
-            }
+            }        
             member.Photos.Add(photo);
             if (await memberRepository.SaveAllAsync()) return photo;
             return BadRequest("Problem adding photo");
@@ -111,7 +113,6 @@ namespace API.Controllers
                 return BadRequest("problem while deleting the photo");
             
         }
-
     }
 
 }
