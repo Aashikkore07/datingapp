@@ -60,6 +60,22 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         await SetRefreshTokenCookie(user);
         return await user.ToDto(tokenService);
     }
+    [HttpPost("Logout")]
+    public async Task<ActionResult> Logout()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if(refreshToken == null) return NoContent();
+
+        var user = await userManager.Users.FirstOrDefaultAsync(x=> x.RefreshToken == refreshToken && x.RefreshTokenExpiry> DateTime.UtcNow);
+        if(user == null) return Unauthorized();
+        user.RefreshTokenExpiry = null;
+        user.RefreshToken =null;
+        await userManager.UpdateAsync(user);
+        // await SetRefreshTokenCookie(user);
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok("Loggedout Successfully");
+    }
     [HttpPost("refresh-token")]
     public async Task<ActionResult<UserDto>> RefreshToken()
     {

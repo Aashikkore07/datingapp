@@ -9,5 +9,5 @@ export type Message = {
   content: string;
   dateRead?: any;
   messageSent: string;
-  correntUserSender?: boolean;
+  currentUserSender?: boolean;
 };

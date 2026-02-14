@@ -58,7 +58,7 @@
     Edit form goes here
   </form>
   } @else {
-  <div class="">{{ member.description }}</div>
+  <div class="">{{ member.description || 'No Description provided yet' }}</div>
   }
 </div>
 }

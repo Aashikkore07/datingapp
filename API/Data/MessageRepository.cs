@@ -10,6 +10,10 @@ namespace API.Data;
 
 public class MessageRepository(AppDbContext _context) : IMessageRepository
 {
+    public void AddGroup(Group group)
+    {
+        _context.Groups.Add(group);
+    }
 
     public void AddMessage(Message message)
     {
@@ -21,9 +25,28 @@ public class MessageRepository(AppDbContext _context) : IMessageRepository
         _context.Messages.Remove(message);
     }
 
+    public async Task<Connection?> GetConnectionAsync(string connectionId)
+    {
+        return await _context.Connections.FindAsync(connectionId);
+    }
+
+    public Task<Group?> GetGroupForConnection(string connectionId)
+    {
+        return _context.Groups.Include(x => x.Connections)
+                .Where(x =>
+                x.Connections.Any(c => c.ConnectionId == connectionId))
+                .FirstOrDefaultAsync();
+    }
+
     public async Task<Message?> GetMessage(string messageId)
     {
         return await _context.Messages.FindAsync(messageId);
+    }
+
+    public async Task<Group?> GetMessageGroupAsync(string groupName)
+    {
+        return await _context.Groups.Include(x => x.Connections)
+                .FirstOrDefaultAsync(x=>x.Name == groupName);
     }
 
     public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(MessageParams messageParams)
@@ -62,6 +85,12 @@ public class MessageRepository(AppDbContext _context) : IMessageRepository
                         .OrderBy(x=>x.MessageSent)
                         .Select(MessageExtensions.TODtoProjection())
                         .ToListAsync(); 
+    }
+
+    public async Task RemoveConnectionAsync(string connectionId)
+    {
+        await _context.Connections.Where(x => x.ConnectionId == connectionId)
+                .ExecuteDeleteAsync();
     }
 
     public async Task<bool> SaveAllAsync()

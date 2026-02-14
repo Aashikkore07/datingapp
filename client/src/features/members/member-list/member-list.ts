@@ -36,7 +36,10 @@ export class MemberList implements OnInit {
   loadMembers() {
     this.memberService.getMembers(this.memberParams).subscribe({
       next: (result) => {
+        var memberId = this.memberService.member()?.id;
+        result.items = result.items.filter((x) => x.id != memberId);
         this.paginatedMembers.set(result);
+        // this.paginatedMembers.set(result);
       },
     });
   }

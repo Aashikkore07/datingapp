@@ -13,33 +13,41 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberLike> Likes { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Group> Groups {get; set;}
+    public DbSet<Connection> Connections {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<IdentityRole>()
-        .HasData( new IdentityRole
+        .HasData(new IdentityRole
         {
-            Id = "member-id",Name="Member",NormalizedName = "MEMBER"
+            Id = "member-id",
+            Name = "Member",
+            NormalizedName = "MEMBER"
         }, new IdentityRole
         {
-            Id = "moderator-id",Name="Moderator",NormalizedName = "MODERATOR"
+            Id = "moderator-id",
+            Name = "Moderator",
+            NormalizedName = "MODERATOR"
         },
         new IdentityRole
         {
-            Id = "admin-id",Name="Admin",NormalizedName = "ADMIN"
+            Id = "admin-id",
+            Name = "Admin",
+            NormalizedName = "ADMIN"
         }
         );
 
         modelBuilder.Entity<Message>().
-        HasOne(r=>r.Recipient)
-        .WithMany(m=>m.MessagesReceived)
+        HasOne(r => r.Recipient)
+        .WithMany(m => m.MessagesReceived)
         .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Message>()
-        .HasOne(s=>s.Sender)
-        .WithMany(m=>m.MessagesSent)
+        .HasOne(s => s.Sender)
+        .WithMany(m => m.MessagesSent)
         .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<MemberLike>().
@@ -61,9 +69,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             v => v.ToUniversalTime(),
             v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
-                var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
-            v => v.HasValue ? v.Value.ToUniversalTime(): null,
-            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc): null) ;
+        var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+    v => v.HasValue ? v.Value.ToUniversalTime() : null,
+    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -74,8 +82,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 {
                     property.SetValueConverter(dateTimeConverter);
                 }
-                else if(property.ClrType == typeof(DateTime?)){
-                    property.SetValueConverter(nullableDateTimeConverter);   
+                else if (property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(nullableDateTimeConverter);
                 }
             }
         }
