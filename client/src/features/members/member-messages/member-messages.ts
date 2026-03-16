@@ -3,6 +3,7 @@ import {
   effect,
   ElementRef,
   inject,
+  model,
   OnDestroy,
   OnInit,
   signal,
@@ -30,7 +31,7 @@ export class MemberMessages implements OnInit, OnDestroy {
   private memberService = inject(MemberService);
   private route = inject(ActivatedRoute);
   // protected messages = signal<Message[]>([]);
-  protected messageContent = '';
+  protected messageContent = model('');
   protected presenceService = inject(PresenceService);
   ngOnInit(): void {
     // this.loadMessages();
@@ -68,15 +69,15 @@ export class MemberMessages implements OnInit, OnDestroy {
   // }
   sendMessage() {
     const recipientId = this.memberService.member()?.id;
-    if (!recipientId) return;
+    if (!recipientId || !this.messageContent()) return;
     var result = this.messageService
-      .sendMessage(recipientId, this.messageContent)
+      .sendMessage(recipientId, this.messageContent())
       ?.then(() => {
-        this.messageContent = '';
+        this.messageContent.set('');
       })
       .catch((err) => console.log(err));
     // console.log(result);
-    this.messageContent = '';
+    this.messageContent.set('');
   }
 
   scrollToBottom() {

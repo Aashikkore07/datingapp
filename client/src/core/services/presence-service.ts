@@ -33,8 +33,6 @@ export class PresenceService {
     });
 
     this.hubConnecion.on('NewMessageReceived', (message: Message) => {
-      console.log(message.content);
-      console.log(message);
       this.toast.info(
         message.senderDisplayName + ' has sent:\n' + message.content,
         10000,

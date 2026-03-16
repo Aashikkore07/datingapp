@@ -7,7 +7,7 @@
       for="dropzone-file"
       [class.border-purple-600]="isDragging"
       [class.border-4]="isDragging"
-      [class.BG-purple-100]="isDragging"
+      [class]="isDragging ? 'bg-secondary/5' : ''"
       class="flex flex-col items-center justify-center w-full border-2 border-gray-300 h-full border-dashed rounded-lg cursor-pointer"
     >
       <p class="mb-2 text-lg">Click to Upload / drag and drop here</p>

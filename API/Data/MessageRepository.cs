@@ -86,15 +86,10 @@ public class MessageRepository(AppDbContext _context) : IMessageRepository
                         .Select(MessageExtensions.TODtoProjection())
                         .ToListAsync(); 
     }
-
+    
     public async Task RemoveConnectionAsync(string connectionId)
     {
         await _context.Connections.Where(x => x.ConnectionId == connectionId)
                 .ExecuteDeleteAsync();
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await _context.SaveChangesAsync()>0;
     }
 }

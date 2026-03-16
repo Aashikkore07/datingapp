@@ -6,6 +6,7 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -60,30 +61,35 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         await SetRefreshTokenCookie(user);
         return await user.ToDto(tokenService);
     }
+    [Authorize]
     [HttpPost("Logout")]
     public async Task<ActionResult> Logout()
     {
         var refreshToken = Request.Cookies["refreshToken"];
-        if(refreshToken == null) return NoContent();
+        if (refreshToken == null) return NoContent();
 
-        var user = await userManager.Users.FirstOrDefaultAsync(x=> x.RefreshToken == refreshToken && x.RefreshTokenExpiry> DateTime.UtcNow);
-        if(user == null) return Unauthorized();
-        user.RefreshTokenExpiry = null;
-        user.RefreshToken =null;
-        await userManager.UpdateAsync(user);
+        // var user = await userManager.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiry > DateTime.UtcNow);
+        // if (user == null) return Unauthorized();
+        // user.RefreshTokenExpiry = null;
+        // user.RefreshToken = null;
+        // await userManager.UpdateAsync(user);
+        await userManager.Users.Where(x=> x.Id == User.GetMemberId())
+                .ExecuteUpdateAsync(set => set
+                .SetProperty(x=> x.RefreshToken,_ => null)
+                .SetProperty(x=>x.RefreshTokenExpiry,_=>null));
         // await SetRefreshTokenCookie(user);
         Response.Cookies.Delete("refreshToken");
 
-        return Ok("Loggedout Successfully");
+        return Ok();
     }
     [HttpPost("refresh-token")]
     public async Task<ActionResult<UserDto>> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
-        if(refreshToken == null) return NoContent();
+        if (refreshToken == null) return NoContent();
 
-        var user = await userManager.Users.FirstOrDefaultAsync(x=> x.RefreshToken == refreshToken && x.RefreshTokenExpiry> DateTime.UtcNow);
-        if(user == null) return Unauthorized();
+        var user = await userManager.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiry > DateTime.UtcNow);
+        if (user == null) return Unauthorized();
         await SetRefreshTokenCookie(user);
         return await user.ToDto(tokenService);
     }
@@ -103,4 +109,5 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
         Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
+
 }

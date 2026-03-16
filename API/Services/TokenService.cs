@@ -24,7 +24,6 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
         {
             new (ClaimTypes.Email , user.Email!),
             new(ClaimTypes.NameIdentifier,user.Id)
-
         };
 
         var roles = await userManager.GetRolesAsync(user);
@@ -33,7 +32,7 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddMinutes(7),
+            Expires = DateTime.Now.AddDays(15),
             SigningCredentials = creds
         };
         var tokenHandler = new JwtSecurityTokenHandler();

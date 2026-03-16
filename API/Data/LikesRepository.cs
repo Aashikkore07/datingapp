@@ -65,8 +65,5 @@ public class LikesRepository( AppDbContext _context) : ILikesRepository
 
     }
 
-    public async Task<bool> SaveAllChanges()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
+    
 }

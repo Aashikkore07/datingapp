@@ -46,7 +46,7 @@ export class AccountService {
           },
           error: () => this.logout(),
         });
-    }, 5 * 60 * 1000);
+    }, 14 * 24 * 60 * 60 * 1000); //14 days
   }
   setCurrentUser(user: User) {
     user.roles = this.getRolesFromToken(user);
@@ -73,16 +73,17 @@ export class AccountService {
 
   logout() {
     // localStorage.removeItem('user');
+
+    this.http.post(this.baseUrl + 'account/Logout', {}, { withCredentials: true }).subscribe({
+      next: (res) => console.log(res),
+      error: (error) => console.log(error),
+    });
     localStorage.removeItem('filters');
     this.currentUser.set(null);
     this.likeService.clearLikeIds();
     if (this.presenceService.hubConnecion?.state !== HubConnectionState.Disconnected) {
       this.presenceService.stopHubConnection();
     }
-    this.http.post(this.baseUrl + 'account/logout', {}, { withCredentials: true }).subscribe({
-      next: (res) => console.log(res),
-      error: (error) => console.log(error),
-    });
     // this.presenceService.stopHubConnection();
   }
   private getRolesFromToken(user: User): string[] {
