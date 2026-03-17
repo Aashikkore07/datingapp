@@ -24,7 +24,6 @@ export class AccountService {
           if (user) {
             this.setCurrentUser(user);
             this.startTokenRefreshInterval();
-            console.log(user);
           }
         })
       );
@@ -84,7 +83,6 @@ export class AccountService {
     if (this.presenceService.hubConnecion?.state !== HubConnectionState.Disconnected) {
       this.presenceService.stopHubConnection();
     }
-    // this.presenceService.stopHubConnection();
   }
   private getRolesFromToken(user: User): string[] {
     const payload = user.token.split('.')[1];

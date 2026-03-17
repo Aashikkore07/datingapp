@@ -7,6 +7,7 @@ import { MemberCard } from '../member-card/member-card';
 import { PaginatedResult } from '../../../types/Pagination';
 import { Paginator } from '../../../shared/paginator/paginator';
 import { FilterModal } from '../filter-modal/filter-modal';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-member-list',
@@ -21,6 +22,7 @@ export class MemberList implements OnInit {
   // protected paginatedMembers$?: Observable<PaginatedResult<Member>>;
   protected memberParams: MemberParams = new MemberParams();
   private updateParams = new MemberParams();
+  protected accountService = inject(AccountService);
   constructor() {
     // this.loadMembers();
     const filters = localStorage.getItem('filters');
@@ -36,10 +38,9 @@ export class MemberList implements OnInit {
   loadMembers() {
     this.memberService.getMembers(this.memberParams).subscribe({
       next: (result) => {
-        var memberId = this.memberService.member()?.id;
-        result.items = result.items.filter((x) => x.id != memberId);
+        var currentUserId = this.accountService.currentUser()?.id;
+        result.items = result.items.filter((x) => x.id != currentUserId);
         this.paginatedMembers.set(result);
-        // this.paginatedMembers.set(result);
       },
     });
   }
