@@ -7,7 +7,7 @@ namespace API.Controllers
         // GET: FallbackController
         public ActionResult Index()
         {
-            return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","Index.html"),"text/HTML");
+            return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","index.html"),"text/HTML");
         }
 
     }
