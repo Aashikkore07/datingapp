@@ -489,3 +489,10 @@ API/dating.db*
 API/dating.db-shm
 API/dating.db-wal
 API/appsettings.Development.json
+
+
+# Allow Angular build for deployment
+
+wwwroot/
+!API/wwwroot/
+!API/wwwroot/**
